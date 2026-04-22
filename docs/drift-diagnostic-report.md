@@ -1,0 +1,9 @@
+# Drift Diagnostic Report
+
+The two features with the clearest drift are query length and retrieval-score distribution. The computed PSI values — query length PSI 1.09 and retrieval score PSI 0.82 — both substantially exceed the significant-action threshold of 0.20 configured in `.env`. A PSI above 0.20 signals structural change; values at 1.09 and 0.82 indicate the current traffic distribution has diverged severely from the reference window, not merely drifted at the margin.
+
+The week-by-week window analysis shows a controlled escalation through weeks 1–5 (PSI 0.04 to 0.18) followed by a sharp jump in week 6 to observed levels. Query length shifted from a reference mean of approximately 18 tokens to a current mean of approximately 24 tokens with higher variance, and retrieval scores declined from a reference mean of ~0.72 to a current mean of ~0.61. The empty retrieval rate in week 6 reached 0.17, crossing the configured alert threshold of 0.15.
+
+That combination changes the system’s likely failure mode. Rising query length paired with falling retrieval scores and a higher empty retrieval rate means the knowledge base is not covering newer, longer query shapes well. The downstream consequence is lower grounding quality, more incomplete answers, and a higher chance that the model fills evidence gaps with plausible synthesis.
+
+The intervention should focus on retrieval before retraining or model replacement. The immediate steps are to refresh the indexed corpus, review chunking for long-form control narratives, and create a watchlist of newly emerging query themes. If PSI remains above the significant threshold after a corpus refresh, the next step is prompt and retriever tuning, followed by a fresh A/B test. Changing the model first is the wrong sequence because the observable evidence points to an upstream evidence-matching problem, not a generation-quality problem.

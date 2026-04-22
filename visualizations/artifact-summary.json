@@ -1,0 +1,5 @@
+{
+  "audit_integrity_valid": true,
+  "ab_recommendation": "RUN_MORE_DATA",
+  "drift_action": "Refresh the knowledge base, review new long-form queries, and tighten alerting on empty retrieval rate."
+}

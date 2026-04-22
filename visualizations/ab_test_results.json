@@ -1,0 +1,25 @@
+{
+  "sample_size_per_group": 2003,
+  "control_total": 2010,
+  "treatment_total": 1996,
+  "control_success_rate": 0.6218905472636815,
+  "treatment_success_rate": 0.6773547094188377,
+  "p99_treatment_latency_ms": 2615.6786905457175,
+  "treatment_error_rate": 0.01753507014028056,
+  "treatment_cost_per_query": 0.013811226219623966,
+  "guardrails": {
+    "latency_pass": false,
+    "error_pass": true,
+    "cost_pass": true
+  },
+  "statistics": {
+    "z_stat": 3.6788241310365506,
+    "p_value": 0.00023431176825217115,
+    "significant": true,
+    "absolute_lift": 0.05546416215515615,
+    "relative_lift": 0.0891863727454911,
+    "ci_low": 0.025967754163178865,
+    "ci_high": 0.08496057014713343
+  },
+  "recommendation": "RUN_MORE_DATA"
+}
