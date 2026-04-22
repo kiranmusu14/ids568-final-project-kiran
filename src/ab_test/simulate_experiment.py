@@ -1,3 +1,12 @@
+"""
+A/B experiment simulation for the rag_topk_experiment.
+
+Variant assignment uses a deterministic MD5 hash of (user_id, experiment_name)
+so each user always sees the same variant across sessions, preventing
+contamination from users experiencing both arms.  The simulation uses the
+sample size computed by power_analysis.py rather than a hand-entered constant,
+so changing .env parameters automatically adjusts the experiment scale.
+"""
 from __future__ import annotations
 
 import hashlib

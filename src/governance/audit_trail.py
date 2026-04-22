@@ -1,3 +1,12 @@
+"""
+Hash-chained audit trail for the IDS 568 RAG governance packet.
+
+Each event is serialized to a canonical JSON string (sort_keys=True) and
+hashed with SHA-256.  The hash of event N is included in the payload of
+event N+1 as previous_hash, forming a chain.  Any post-hoc modification of
+an earlier event invalidates all subsequent hashes, making tampering
+detectable without a trusted third-party timestamp service.
+"""
 from __future__ import annotations
 
 import hashlib

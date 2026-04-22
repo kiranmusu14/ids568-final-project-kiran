@@ -1,3 +1,13 @@
+"""
+FastAPI service for the IDS 568 Agentic RAG monitoring demonstration.
+
+_simulate_rag() approximates the latency profile and retrieval behavior of a
+real RAG pipeline using parameterized Gaussian distributions loaded from .env.
+All metric observations happen inside this function so that a single /query
+call exercises every LLM/RAG-specific Prometheus metric defined in
+instrumentation.py.  The /metrics endpoint is consumed by Prometheus's
+pull-based scraper.
+"""
 from __future__ import annotations
 
 import random

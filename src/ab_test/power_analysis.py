@@ -1,3 +1,11 @@
+"""
+Sample-size calculation for a two-proportion A/B test.
+
+Uses the arcsine-transformation formula (Cohen 1988) which is more
+accurate than the normal-approximation formula for proportions near 0 or 1.
+All experiment parameters are loaded from .env so the calculation stays
+reproducible without hard-coded constants.
+"""
 from __future__ import annotations
 
 import math

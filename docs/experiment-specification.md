@@ -47,3 +47,9 @@ Because this repository uses simulated traffic, duration is expressed as the amo
   - Ship B if lift is positive, statistically significant, and all guardrails pass
   - Keep A if lift is negative
   - Run more data if lift is promising but guardrails or confidence remain inconclusive
+
+## Multiple Comparisons and Stopping Rules
+
+This experiment tests a single pre-registered primary hypothesis (task completion rate) against a fixed sample size computed before the experiment starts. Because there is one primary test and the sample size is fixed in advance, no multiple-comparisons correction (Bonferroni, Holm, or Benjamini-Hochberg) is required for the primary decision. If secondary metrics such as average retrieval score or cost per query were elevated to co-primary status after seeing the data, a correction would be mandatory to control the family-wise error rate.
+
+The experiment uses a fixed-sample design rather than a sequential (group-sequential or always-valid) design. This means the primary z-test is applied once at full sample size, not at interim checkpoints. Peeking at results before sample collection is complete and stopping early based on significance would inflate the Type I error rate above the nominal α = 0.05 level. In a live deployment, a sequential design with an alpha-spending function (e.g., O'Brien-Fleming) would be appropriate if early stopping for efficacy is operationally desirable.

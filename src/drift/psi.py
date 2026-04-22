@@ -1,3 +1,15 @@
+"""
+Population Stability Index (PSI) implementation.
+
+PSI measures how much a distribution has shifted between a reference window
+and a current window.  Conventional thresholds:
+  PSI < 0.10  → stable (no action needed)
+  0.10–0.20   → moderate drift (investigate)
+  PSI ≥ 0.20  → significant drift (act immediately)
+
+Laplace smoothing (+1 pseudo-count per bin) avoids log(0) when a bin is
+empty in either window, which is common with small sample sizes.
+"""
 from __future__ import annotations
 
 import math

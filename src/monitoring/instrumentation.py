@@ -1,3 +1,12 @@
+"""
+Prometheus metric definitions for the IDS 568 Agentic RAG service.
+
+All metrics use a shared CollectorRegistry so they can be exported as a
+single /metrics payload without conflicting with any default global registry.
+LLM/RAG-specific signals (TTFT, token throughput, retrieval score) are
+defined here alongside standard infrastructure metrics so a single Grafana
+dashboard covers both operational health and evidence-quality health.
+"""
 from __future__ import annotations
 
 from prometheus_client import CollectorRegistry, Counter, Gauge, Histogram, generate_latest
