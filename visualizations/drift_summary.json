@@ -51,41 +51,73 @@
       "floor": 0.1
     }
   },
+  "response_length": {
+    "psi": 1.638781362390771,
+    "severity": "significant",
+    "outliers_reference": {
+      "n_total": 1200,
+      "n_outliers_z": 13,
+      "outlier_rate_z": 0.0108,
+      "n_floor_violations": 0,
+      "floor_violation_rate": null,
+      "mean": 63.5308,
+      "std": 13.6854,
+      "z_threshold": 2.5,
+      "floor": null
+    },
+    "outliers_current": {
+      "n_total": 600,
+      "n_outliers_z": 12,
+      "outlier_rate_z": 0.02,
+      "n_floor_violations": 0,
+      "floor_violation_rate": null,
+      "mean": 92.1727,
+      "std": 23.4373,
+      "z_threshold": 2.5,
+      "floor": null
+    }
+  },
   "windows": [
     {
       "window": "week_1",
       "query_length_psi": 0.04,
       "retrieval_score_psi": 0.03,
+      "response_length_psi": 0.02,
       "empty_retrieval_rate": 0.04
     },
     {
       "window": "week_2",
-      "query_length_psi": 0.06,
-      "retrieval_score_psi": 0.05,
-      "empty_retrieval_rate": 0.05
+      "query_length_psi": 0.082,
+      "retrieval_score_psi": 0.061,
+      "response_length_psi": 0.085,
+      "empty_retrieval_rate": 0.045
     },
     {
       "window": "week_3",
-      "query_length_psi": 0.08,
-      "retrieval_score_psi": 0.07,
-      "empty_retrieval_rate": 0.06
+      "query_length_psi": 0.208,
+      "retrieval_score_psi": 0.156,
+      "response_length_psi": 0.279,
+      "empty_retrieval_rate": 0.061
     },
     {
       "window": "week_4",
-      "query_length_psi": 0.11,
-      "retrieval_score_psi": 0.12,
-      "empty_retrieval_rate": 0.08
+      "query_length_psi": 0.419,
+      "retrieval_score_psi": 0.313,
+      "response_length_psi": 0.603,
+      "empty_retrieval_rate": 0.087
     },
     {
       "window": "week_5",
-      "query_length_psi": 0.16,
-      "retrieval_score_psi": 0.18,
-      "empty_retrieval_rate": 0.11
+      "query_length_psi": 0.714,
+      "retrieval_score_psi": 0.533,
+      "response_length_psi": 1.056,
+      "empty_retrieval_rate": 0.123
     },
     {
       "window": "week_6",
       "query_length_psi": 1.093,
       "retrieval_score_psi": 0.816,
+      "response_length_psi": 1.639,
       "empty_retrieval_rate": 0.17
     }
   ],

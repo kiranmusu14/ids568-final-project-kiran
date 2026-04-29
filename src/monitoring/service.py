@@ -26,6 +26,7 @@ from src.monitoring.instrumentation import (
     REQUEST_ERRORS,
     REQUEST_LATENCY,
     RETRIEVAL_SCORE,
+    RESPONSE_LENGTH,
     TOKEN_THROUGHPUT,
     TTFT_SECONDS,
     metrics_payload,
@@ -40,17 +41,43 @@ class QueryRequest(BaseModel):
     query: str
 
 
-def _simulate_rag(query: str) -> dict[str, Any]:
+def _simulate_rag(query: str, rng: random.Random | None = None) -> dict[str, Any]:
+    rng = rng or random
     route = "/query"
     token_count = max(6, len(query.split()) * 2)
-    retrieval_scores = sorted([max(0.05, min(0.99, random.gauss(0.68, 0.18))) for _ in range(settings.retrieval_top_k)], reverse=True)
-    ttft = max(0.04, random.gauss(0.19, 0.05))
-    generation_seconds = max(0.2, random.gauss(1.35, 0.25))
+    retrieval_scores = sorted(
+        [
+            max(
+                settings.sim_retrieval_score_min,
+                min(
+                    settings.sim_retrieval_score_max,
+                    rng.gauss(settings.sim_retrieval_score_mean, settings.sim_retrieval_score_std),
+                ),
+            )
+            for _ in range(settings.retrieval_top_k)
+        ],
+        reverse=True,
+    )
+    ttft = max(settings.sim_ttft_min_seconds, rng.gauss(settings.sim_ttft_mean_seconds, settings.sim_ttft_std_seconds))
+    generation_seconds = max(
+        settings.sim_generation_min_seconds,
+        rng.gauss(settings.sim_generation_mean_seconds, settings.sim_generation_std_seconds),
+    )
     total_latency = ttft + generation_seconds
     throughput = token_count / generation_seconds
     empty_retrieval = float(max(retrieval_scores) < settings.retrieval_score_threshold)
+    response_tokens = max(
+        settings.sim_response_token_min,
+        round(
+            rng.gauss(
+                settings.sim_response_token_base + (token_count * settings.sim_response_token_query_multiplier),
+                settings.sim_response_token_std,
+            )
+        ),
+    )
 
     QUERY_LENGTH.labels(route=route).observe(token_count)
+    RESPONSE_LENGTH.labels(route=route).observe(response_tokens)
     TTFT_SECONDS.labels(route=route).observe(ttft)
     REQUEST_LATENCY.labels(route=route).observe(total_latency)
     TOKEN_THROUGHPUT.labels(route=route).set(throughput)
@@ -67,6 +94,7 @@ def _simulate_rag(query: str) -> dict[str, Any]:
         "ttft_seconds": round(ttft, 3),
         "latency_seconds": round(total_latency, 3),
         "token_throughput_tps": round(throughput, 2),
+        "response_length_tokens": response_tokens,
         "retrieval_scores": [round(score, 3) for score in retrieval_scores],
         "empty_retrieval": bool(empty_retrieval),
     }

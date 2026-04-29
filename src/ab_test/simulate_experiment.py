@@ -12,7 +12,12 @@ from __future__ import annotations
 import hashlib
 import json
 import random
+import sys
+from pathlib import Path
 from statistics import NormalDist
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.ab_test.power_analysis import calculate_sample_size
 from src.common.config import ROOT, settings
@@ -61,13 +66,24 @@ def run_experiment(seed: int = 568) -> dict[str, object]:
     treatment_total = total_users - control_total
 
     control_successes = [1 if rng.random() < settings.ab_baseline_task_success else 0 for _ in range(control_total)]
-    treatment_rate = settings.ab_baseline_task_success * (1 + settings.ab_min_detectable_effect + 0.015)
+    treatment_rate = settings.ab_baseline_task_success * (
+        1 + settings.ab_min_detectable_effect + settings.ab_treatment_extra_lift
+    )
     treatment_successes = [1 if rng.random() < treatment_rate else 0 for _ in range(treatment_total)]
 
-    control_latency = [rng.gauss(1980, 180) for _ in range(control_total)]
-    treatment_latency = [rng.gauss(2140, 200) for _ in range(treatment_total)]
-    treatment_error = [1 if rng.random() < 0.021 else 0 for _ in range(treatment_total)]
-    treatment_cost = [max(0.0, rng.gauss(0.0138, 0.0013)) for _ in range(treatment_total)]
+    control_latency = [
+        rng.gauss(settings.ab_control_latency_mean_ms, settings.ab_control_latency_std_ms)
+        for _ in range(control_total)
+    ]
+    treatment_latency = [
+        rng.gauss(settings.ab_treatment_latency_mean_ms, settings.ab_treatment_latency_std_ms)
+        for _ in range(treatment_total)
+    ]
+    treatment_error = [1 if rng.random() < settings.ab_treatment_error_rate else 0 for _ in range(treatment_total)]
+    treatment_cost = [
+        max(0.0, rng.gauss(settings.ab_treatment_cost_mean, settings.ab_treatment_cost_std))
+        for _ in range(treatment_total)
+    ]
 
     stats_result = two_proportion_ztest(
         sum(control_successes),

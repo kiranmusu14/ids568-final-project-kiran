@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 import random
+import sys
+from pathlib import Path
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from src.common.config import settings
 from src.monitoring.service import _simulate_rag
 
 
@@ -14,11 +20,12 @@ QUERIES = [
 ]
 
 
-def run_simulation(iterations: int = 200) -> list[dict[str, object]]:
+def run_simulation(iterations: int = 200, seed: int = settings.simulation_seed) -> list[dict[str, object]]:
+    rng = random.Random(seed)
     records = []
     for _ in range(iterations):
-        query = random.choice(QUERIES)
-        records.append(_simulate_rag(query))
+        query = rng.choice(QUERIES)
+        records.append(_simulate_rag(query, rng=rng))
     return records
 
 

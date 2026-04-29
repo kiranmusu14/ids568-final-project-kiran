@@ -13,14 +13,15 @@
 | --- | --- |
 | LLM provider | Simulated (local inference; replace with OpenAI / Anthropic endpoint in production) |
 | Model ID | Simulated generative model; production target is a gpt-4o-class or claude-3-class endpoint |
-| Temperature | Loaded from `.env` → `LLM_TEMPERATURE` (default: deterministic simulation; set 0.2–0.7 in production) |
+| Temperature | `LLM_TEMPERATURE=0.2` in `.env` / `.env.example` |
 | Retrieval top-k | `RETRIEVAL_TOP_K=4` (raised from 3 via audit event evt-006) |
-| Chunk size | Loaded from `.env` → `CHUNK_SIZE` (default corpus uses fixed-size chunking) |
+| Chunk size | `CHUNK_SIZE=512` in `.env` / `.env.example` |
 | Retrieval score threshold | `RETRIEVAL_SCORE_THRESHOLD=0.55` |
 | Prompt template version | `rag-v3` (logged in every audit event) |
 | Observed p95 TTFT | ~0.2 s (simulated load; mean 0.19 s, std 0.05 s) |
 | Observed p95 end-to-end latency | ~2.0 s (simulated; mean 1.54 s) |
-| Cache hit ratio | Tracked via audit trail; not yet instrumented as a separate Prometheus metric |
+| Response length distribution | Instrumented as `ids568_rag_response_length_tokens` |
+| Cache hit ratio | Not enabled in this local simulation; would be added for a cached production deployment |
 
 ## Intended Use
 
@@ -38,6 +39,7 @@ This system supports internal compliance research workflows by retrieving policy
 - p95 TTFT is centered near 0.2 seconds in the simulated load test
 - End-to-end latency remains below two seconds for most requests
 - Token throughput remains stable during synthetic traffic
+- Response length is monitored as an observable RAG distribution
 - Retrieval quality shows meaningful degradation under the current drift scenario, which is the dominant operational risk
 
 ## Training and Knowledge Data Description

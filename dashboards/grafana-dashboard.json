@@ -1,8 +1,35 @@
 {
   "title": "IDS 568 Agentic RAG Operations",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "panels": [
+    {
+      "title": "Request Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ids568_rag_request_total[5m]))"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(rate(ids568_rag_request_total{status=\"error\"}[5m])) / clamp_min(sum(rate(ids568_rag_request_total[5m])), 0.001)"
+        }
+      ]
+    },
+    {
+      "title": "End-to-End Latency p95",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ids568_rag_request_latency_seconds_bucket[5m])) by (le))"
+        }
+      ]
+    },
     {
       "title": "TTFT p95",
       "type": "timeseries",
@@ -31,11 +58,29 @@
       ]
     },
     {
+      "title": "Response Length Distribution",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ids568_rag_response_length_tokens_bucket[5m])) by (le)"
+        }
+      ]
+    },
+    {
       "title": "Empty Retrieval Rate",
       "type": "stat",
       "targets": [
         {
           "expr": "avg(ids568_rag_empty_retrieval_rate)"
+        }
+      ]
+    },
+    {
+      "title": "Query Length Distribution",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ids568_rag_query_length_tokens_bucket[5m])) by (le)"
         }
       ]
     }

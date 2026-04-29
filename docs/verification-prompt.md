@@ -16,7 +16,7 @@ Audit Instructions:
 5. For every checklist item, cite the exact supporting path, for example:
    - `src/monitoring/instrumentation.py`
    - `docs/model-card.md`
-   - `logs/audit_trail.jsonl`
+   - `logs/audit-trail.json`
    - `visualizations/dashboard-export.png`
 6. Validate the repository against these major sections:
    - Component 1: monitoring instrumentation, collector config, dashboard config, dashboard export, interpretation

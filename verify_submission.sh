@@ -8,6 +8,9 @@ elif command -v python3.13 >/dev/null 2>&1; then
   PYTHON_BIN="python3.13"
 fi
 
+AUDIT_TRAIL_FILENAME=$(grep '^AUDIT_TRAIL_FILENAME=' .env 2>/dev/null | cut -d= -f2)
+AUDIT_TRAIL_FILENAME="${AUDIT_TRAIL_FILENAME:-audit-trail.json}"
+
 required_files=(
   "README.md"
   "requirements.txt"
@@ -33,7 +36,7 @@ required_files=(
   "docs/cto-memo.md"
   "dashboards/prometheus.yml"
   "dashboards/grafana-dashboard.json"
-  "logs/audit_trail.jsonl"
+  "logs/${AUDIT_TRAIL_FILENAME}"
   "visualizations/dashboard-export.png"
   "visualizations/ab-test-summary.png"
   "visualizations/drift-over-time.png"
@@ -57,11 +60,50 @@ echo "Running Python syntax checks..."
   src/governance/audit_trail.py \
   src/generate_project_artifacts.py
 
+echo "Running artifact generation and component smoke tests..."
+"$PYTHON_BIN" src/generate_project_artifacts.py
+"$PYTHON_BIN" src/ab_test/power_analysis.py >/tmp/ids568_power_analysis.txt
+"$PYTHON_BIN" src/ab_test/simulate_experiment.py >/tmp/ids568_ab_results.json
+"$PYTHON_BIN" src/drift/analyze_drift.py >/tmp/ids568_drift_results.json
+"$PYTHON_BIN" src/monitoring/simulate_traffic.py >/tmp/ids568_monitoring_simulation.txt
+"$PYTHON_BIN" src/governance/audit_trail.py >/tmp/ids568_audit_trail.txt
+
+echo "Checking RAG-specific generated evidence..."
+grep -q "ids568_rag_ttft_seconds" dashboards/grafana-dashboard.json
+grep -q "ids568_rag_token_throughput_tps" dashboards/grafana-dashboard.json
+grep -q "ids568_rag_retrieval_score" dashboards/grafana-dashboard.json
+grep -q "ids568_rag_response_length_tokens" dashboards/grafana-dashboard.json
+grep -q "response_length_psi" visualizations/drift_summary.json
+"$PYTHON_BIN" - <<'PY'
+from src.monitoring.instrumentation import metrics_payload
+from src.monitoring.service import _simulate_rag
+
+result = _simulate_rag("Which controls mitigate prompt injection in the agent planner?")
+assert "response_length_tokens" in result
+payload = metrics_payload().decode("utf-8")
+for metric in [
+    "ids568_rag_ttft_seconds",
+    "ids568_rag_token_throughput_tps",
+    "ids568_rag_retrieval_score",
+    "ids568_rag_response_length_tokens",
+    "ids568_rag_query_length_tokens",
+]:
+    assert metric in payload, f"Missing emitted metric: {metric}"
+print("RAG metrics emitted.")
+PY
+
 echo "Checking audit log integrity..."
 "$PYTHON_BIN" - <<'PY'
 from src.governance.audit_trail import verify_audit_log
 assert verify_audit_log(), "Audit trail hash chain verification failed"
 print("Audit trail integrity verified.")
 PY
+
+echo "Checking repository size..."
+SIZE_MB=$(du -sm . | cut -f1)
+if [[ "$SIZE_MB" -ge 100 ]]; then
+  echo "Repository size ${SIZE_MB}MB exceeds 100MB limit" >&2
+  exit 1
+fi
 
 echo "Submission sanity checks passed."

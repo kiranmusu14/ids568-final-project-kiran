@@ -3,7 +3,7 @@ Prometheus metric definitions for the IDS 568 Agentic RAG service.
 
 All metrics use a shared CollectorRegistry so they can be exported as a
 single /metrics payload without conflicting with any default global registry.
-LLM/RAG-specific signals (TTFT, token throughput, retrieval score) are
+LLM/RAG-specific signals (TTFT, token throughput, retrieval score, response length) are
 defined here alongside standard infrastructure metrics so a single Grafana
 dashboard covers both operational health and evidence-quality health.
 """
@@ -74,6 +74,14 @@ QUERY_LENGTH = Histogram(
     ["route"],
     namespace=settings.prometheus_namespace,
     buckets=(5, 10, 20, 40, 80, 120),
+    registry=REGISTRY,
+)
+RESPONSE_LENGTH = Histogram(
+    "response_length_tokens",
+    "Generated response length measured in approximate tokens",
+    ["route"],
+    namespace=settings.prometheus_namespace,
+    buckets=settings.response_length_buckets,
     registry=REGISTRY,
 )
 

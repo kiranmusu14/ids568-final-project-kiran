@@ -9,7 +9,12 @@ reproducible without hard-coded constants.
 from __future__ import annotations
 
 import math
+import sys
+from pathlib import Path
 from statistics import NormalDist
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.common.config import settings
 

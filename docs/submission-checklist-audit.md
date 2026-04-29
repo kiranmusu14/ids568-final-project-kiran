@@ -22,14 +22,14 @@ This audit cross-references the Final Project Specification, the Submission Chec
 - PASS: Component 3 performance metrics, training data description, limitations, ethical risks, intended use, and out-of-scope use are covered in [docs/model-card.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/model-card.md).
 - PASS: Component 3 lineage diagram exists in [docs/lineage-diagram.png](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/lineage-diagram.png).
 - PASS: Component 3 risk register exists in [docs/risk-register.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/risk-register.md) and includes bias, robustness, privacy, and compliance categories.
-- PASS: Component 3 audit trail exists in [logs/audit_trail.jsonl](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/logs/audit_trail.jsonl).
+- PASS: Component 3 audit trail exists in [logs/audit-trail.json](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/logs/audit-trail.json).
 - PASS: Component 3 tamper detection is implemented in [src/governance/audit_trail.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/governance/audit_trail.py) and exercised by [verify_submission.sh](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/verify_submission.sh).
 - PASS: Module 8 system-card guidance is followed because [docs/model-card.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/model-card.md) documents observable system details rather than unverifiable vendor internals.
 
 - PASS: Component 4 drift scripts exist in [src/drift/psi.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/psi.py) and [src/drift/analyze_drift.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/analyze_drift.py).
 - PASS: Component 4 drift visualization exists in [visualizations/drift-over-time.png](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/visualizations/drift-over-time.png).
 - PASS: Component 4 diagnostic report exists in [docs/drift-diagnostic-report.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/drift-diagnostic-report.md) and addresses the most-drifted features, impact, and recommended intervention.
-- PASS: Module 8 RAG drift adaptation is satisfied because PSI is applied to query-length and retrieval-score distributions in [src/drift/analyze_drift.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/analyze_drift.py).
+- PASS: Module 8 RAG drift adaptation is satisfied because PSI is applied to query-length, retrieval-score, and response-length distributions in [src/drift/analyze_drift.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/analyze_drift.py) with generated output in [visualizations/drift_summary.json](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/visualizations/drift_summary.json).
 
 - PASS: Component 5 system boundary diagram exists in [docs/system-boundary-diagram.png](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/system-boundary-diagram.png).
 - PASS: Component 5 structured governance review exists in [docs/governance-review.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/governance-review.md) and covers data security, retrieval risks, hallucination points, tool-misuse pathways, and compliance concerns.
@@ -44,11 +44,11 @@ This audit cross-references the Final Project Specification, the Submission Chec
 - PASS: Windows setup automation exists in [setup_env.bat](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/setup_env.bat).
 - PASS: Thresholds and configuration are externalized through [.env.example](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/.env.example) and loaded by [src/common/config.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/common/config.py).
 - PASS: Automated sanity checks exist in [verify_submission.sh](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/verify_submission.sh).
-- PASS: Local verification succeeded via `./verify_submission.sh`, including file existence, Python syntax, and audit-log integrity checks.
+- PASS: Local verification succeeded via `./verify_submission.sh`, including file existence, direct script execution, artifact generation, RAG metric emission, Python syntax, repository size, and audit-log integrity checks.
 
 - PARTIAL: The repository naming requirement appears intended, but this audit cannot independently confirm the final remote GitHub repository name beyond the local folder path.
 - PARTIAL: The `git tag submission && git push --tags` checklist item is not yet proven by repository state in this local audit.
-- PASS: Total repository size is under 100 MB based on local measurement of `38M`.
+- PASS: Total repository size is under 100 MB based on local measurement of `41M`.
 
 ## Rubric Evidence Map
 
@@ -64,7 +64,7 @@ This audit cross-references the Final Project Specification, the Submission Chec
 - Component 3 system card evidence: [docs/model-card.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/model-card.md)
 - Component 3 lineage evidence: [docs/lineage-diagram.png](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/lineage-diagram.png)
 - Component 3 risk evidence: [docs/risk-register.md](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/docs/risk-register.md)
-- Component 3 audit evidence: [logs/audit_trail.jsonl](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/logs/audit_trail.jsonl), [src/governance/audit_trail.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/governance/audit_trail.py)
+- Component 3 audit evidence: [logs/audit-trail.json](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/logs/audit-trail.json), [src/governance/audit_trail.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/governance/audit_trail.py)
 
 - Component 4 drift-code evidence: [src/drift/psi.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/psi.py), [src/drift/analyze_drift.py](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/src/drift/analyze_drift.py)
 - Component 4 visualization evidence: [visualizations/drift-over-time.png](/Users/kiran14/Documents/IDS%20568/Ids568-final-project/-ids568-final-project-kiran/visualizations/drift-over-time.png)

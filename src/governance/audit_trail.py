@@ -12,9 +12,13 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import sys
 from typing import Any
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.common.config import ROOT, settings
 
@@ -42,13 +46,23 @@ def build_audit_log() -> list[AuditEvent]:
         ("evt-002", "PROMPT_TEMPLATE_CHANGED", "mlops_architect", "prompt-template", "promote prompt", {"template_version": "rag-v3"}),
         ("evt-003", "KNOWLEDGE_BASE_UPDATED", "data_engineer", "kb-index", "refresh controls corpus", {"documents_added": 14}),
         ("evt-004", "APPROVAL_GRANTED", "governance_lead", "release-ticket", "approve guarded rollout", {"ticket": "CAB-568"}),
-        ("evt-005", "MONITORING_ALERT", "oncall_engineer", "grafana-alert", "empty retrieval alert fired", {"empty_retrieval_rate": 0.17}),
+        (
+            "evt-005",
+            "MONITORING_ALERT",
+            "oncall_engineer",
+            "grafana-alert",
+            "empty retrieval alert fired",
+            {"empty_retrieval_rate": settings.drift_current_empty_retrieval_rate},
+        ),
         ("evt-006", "INTERVENTION", "oncall_engineer", "retriever-config", "raise retrieval top-k", {"top_k": 4}),
     ]
     events: list[AuditEvent] = []
     previous_hash = "GENESIS"
-    for event_id, event_type, actor, resource_id, action, details in raw_events:
-        timestamp = datetime.now(timezone.utc).isoformat()
+    base_timestamp = datetime.fromisoformat(settings.audit_base_timestamp)
+    if base_timestamp.tzinfo is None:
+        base_timestamp = base_timestamp.replace(tzinfo=timezone.utc)
+    for index, (event_id, event_type, actor, resource_id, action, details) in enumerate(raw_events):
+        timestamp = (base_timestamp + timedelta(seconds=index * settings.audit_event_spacing_seconds)).isoformat()
         payload = json.dumps(
             {
                 "event_id": event_id,
@@ -81,7 +95,7 @@ def build_audit_log() -> list[AuditEvent]:
 
 
 def write_audit_log(path: Path | None = None) -> Path:
-    output = path or ROOT / "logs" / "audit_trail.jsonl"
+    output = path or ROOT / "logs" / settings.audit_trail_filename
     output.parent.mkdir(parents=True, exist_ok=True)
     events = build_audit_log()
     output.write_text("\n".join(json.dumps(asdict(event)) for event in events) + "\n")
@@ -89,7 +103,7 @@ def write_audit_log(path: Path | None = None) -> Path:
 
 
 def verify_audit_log(path: Path | None = None) -> bool:
-    source = path or ROOT / "logs" / "audit_trail.jsonl"
+    source = path or ROOT / "logs" / settings.audit_trail_filename
     previous_hash = "GENESIS"
     for line in source.read_text().splitlines():
         payload = json.loads(line)

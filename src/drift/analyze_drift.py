@@ -3,6 +3,11 @@ from __future__ import annotations
 import json
 import math
 import random
+import sys
+from pathlib import Path
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.common.config import ROOT, settings
 from src.drift.psi import calculate_psi, classify_psi
@@ -40,15 +45,62 @@ def detect_outliers(
     }
 
 
+def _clamp(values: list[float], lower: float, upper: float) -> list[float]:
+    return [min(upper, max(lower, value)) for value in values]
+
+
+def _window_series(final_value: float, initial_value: float) -> list[float]:
+    count = max(2, settings.drift_window_count)
+    return [
+        round(initial_value + ((final_value - initial_value) * ((index / (count - 1)) ** 2)), 3)
+        for index in range(count)
+    ]
+
+
 def build_drift_report(seed: int = 568) -> dict[str, object]:
     rng = random.Random(seed)
-    reference_query_length = [max(3.0, rng.gauss(18, 5)) for _ in range(1200)]
-    current_query_length = [max(3.0, rng.gauss(24, 7)) for _ in range(600)]
-    reference_retrieval = [min(0.99, max(0.05, rng.gauss(0.72, 0.08))) for _ in range(1200)]
-    current_retrieval = [min(0.99, max(0.05, rng.gauss(0.61, 0.12))) for _ in range(600)]
+    reference_query_length = [
+        max(3.0, rng.gauss(settings.drift_reference_query_length_mean, settings.drift_reference_query_length_std))
+        for _ in range(settings.drift_reference_sample_size)
+    ]
+    current_query_length = [
+        max(3.0, rng.gauss(settings.drift_current_query_length_mean, settings.drift_current_query_length_std))
+        for _ in range(settings.drift_current_sample_size)
+    ]
+    reference_retrieval = _clamp(
+        [
+            rng.gauss(settings.drift_reference_retrieval_score_mean, settings.drift_reference_retrieval_score_std)
+            for _ in range(settings.drift_reference_sample_size)
+        ],
+        0.05,
+        0.99,
+    )
+    current_retrieval = _clamp(
+        [
+            rng.gauss(settings.drift_current_retrieval_score_mean, settings.drift_current_retrieval_score_std)
+            for _ in range(settings.drift_current_sample_size)
+        ],
+        0.05,
+        0.99,
+    )
+    reference_response_length = [
+        max(
+            settings.sim_response_token_min,
+            rng.gauss(settings.drift_reference_response_length_mean, settings.drift_reference_response_length_std),
+        )
+        for _ in range(settings.drift_reference_sample_size)
+    ]
+    current_response_length = [
+        max(
+            settings.sim_response_token_min,
+            rng.gauss(settings.drift_current_response_length_mean, settings.drift_current_response_length_std),
+        )
+        for _ in range(settings.drift_current_sample_size)
+    ]
 
     query_length_psi = calculate_psi(reference_query_length, current_query_length)
     retrieval_score_psi = calculate_psi(reference_retrieval, current_retrieval)
+    response_length_psi = calculate_psi(reference_response_length, current_response_length)
 
     # Outlier and integrity anomaly detection
     query_outliers_ref = detect_outliers(reference_query_length, z_threshold=2.5)
@@ -56,22 +108,25 @@ def build_drift_report(seed: int = 568) -> dict[str, object]:
     # Retrieval scores below 0.1 are near-zero relevance — treated as integrity violations
     retrieval_outliers_ref = detect_outliers(reference_retrieval, z_threshold=2.5, floor=0.1)
     retrieval_outliers_cur = detect_outliers(current_retrieval, z_threshold=2.5, floor=0.1)
+    response_outliers_ref = detect_outliers(reference_response_length, z_threshold=2.5)
+    response_outliers_cur = detect_outliers(current_response_length, z_threshold=2.5)
 
+    query_windows = _window_series(query_length_psi, settings.drift_initial_query_psi)
+    retrieval_windows = _window_series(retrieval_score_psi, settings.drift_initial_retrieval_psi)
+    response_windows = _window_series(response_length_psi, settings.drift_initial_response_length_psi)
+    empty_windows = _window_series(
+        settings.drift_current_empty_retrieval_rate,
+        settings.drift_initial_empty_retrieval_rate,
+    )
     windows = [
         {
-            "window": f"week_{index}",
-            "query_length_psi": value_a,
-            "retrieval_score_psi": value_b,
-            "empty_retrieval_rate": value_c,
+            "window": f"week_{index + 1}",
+            "query_length_psi": query_windows[index],
+            "retrieval_score_psi": retrieval_windows[index],
+            "response_length_psi": response_windows[index],
+            "empty_retrieval_rate": empty_windows[index],
         }
-        for index, value_a, value_b, value_c in [
-            (1, 0.04, 0.03, 0.04),
-            (2, 0.06, 0.05, 0.05),
-            (3, 0.08, 0.07, 0.06),
-            (4, 0.11, 0.12, 0.08),
-            (5, 0.16, 0.18, 0.11),
-            (6, round(query_length_psi, 3), round(retrieval_score_psi, 3), 0.17),
-        ]
+        for index in range(len(query_windows))
     ]
 
     result = {
@@ -94,6 +149,16 @@ def build_drift_report(seed: int = 568) -> dict[str, object]:
             ),
             "outliers_reference": retrieval_outliers_ref,
             "outliers_current": retrieval_outliers_cur,
+        },
+        "response_length": {
+            "psi": response_length_psi,
+            "severity": classify_psi(
+                response_length_psi,
+                settings.psi_moderate_threshold,
+                settings.psi_significant_threshold,
+            ),
+            "outliers_reference": response_outliers_ref,
+            "outliers_current": response_outliers_cur,
         },
         "windows": windows,
         "recommended_action": "Refresh the knowledge base, review new long-form queries, and tighten alerting on empty retrieval rate.",

@@ -31,7 +31,7 @@ Mac/Linux:
 ./setup_env.sh
 cp .env.example .env
 source venv/bin/activate
-python src/generate_project_artifacts.py
+python -m src.generate_project_artifacts
 ./verify_submission.sh
 ```
 
@@ -41,7 +41,7 @@ Windows:
 setup_env.bat
 copy .env.example .env
 venv\Scripts\activate
-python src\generate_project_artifacts.py
+python -m src.generate_project_artifacts
 bash verify_submission.sh
 ```
 
@@ -52,7 +52,7 @@ The repository is designed to reproduce its outputs in under 10 minutes on a cle
 1. Create and activate the virtual environment.
 2. Install pinned dependencies from `requirements.txt`.
 3. Copy `.env.example` to `.env`.
-4. Run `python src/generate_project_artifacts.py`.
+4. Run `python -m src.generate_project_artifacts`.
 5. Run `./verify_submission.sh`.
 
 The setup scripts prefer Python 3.13 when it is available because that interpreter path was validated during local reproducibility testing.
