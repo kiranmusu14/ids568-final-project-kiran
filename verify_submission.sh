@@ -8,7 +8,16 @@ elif command -v python3.13 >/dev/null 2>&1; then
   PYTHON_BIN="python3.13"
 fi
 
-AUDIT_TRAIL_FILENAME=$(grep '^AUDIT_TRAIL_FILENAME=' .env 2>/dev/null | cut -d= -f2)
+# Bootstrap .env from the example so verification works on a fresh clone
+# even if the user has not run `cp .env.example .env` yet.
+if [[ ! -f ".env" && -f ".env.example" ]]; then
+  cp .env.example .env
+  echo "Bootstrapped .env from .env.example"
+fi
+
+ENV_FILE=".env"
+[[ -f "$ENV_FILE" ]] || ENV_FILE=".env.example"
+AUDIT_TRAIL_FILENAME=$(grep '^AUDIT_TRAIL_FILENAME=' "$ENV_FILE" 2>/dev/null | cut -d= -f2 || true)
 AUDIT_TRAIL_FILENAME="${AUDIT_TRAIL_FILENAME:-audit-trail.json}"
 
 required_files=(

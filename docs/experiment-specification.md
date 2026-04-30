@@ -15,10 +15,41 @@ Increasing retrieval `top-k` from 3 to 4 will improve task completion for compli
 
 ## Success Metrics
 
-- Primary metric: task completion rate without re-query
-- Secondary observable metric: average retrieval score
-- Guardrails: p99 latency, request error rate, and cost per query
-- Governance note: groundedness is documented as an evaluated metric, but not used as the primary online metric because it would require annotation or an external judge pipeline
+The experiment evaluates four distinct metric categories. Each category lists the specific metric used, how it is measured, the decision threshold, and which decision rule it feeds.
+
+### 1. Business KPI — Task Completion Rate (primary)
+
+- Metric: fraction of users who finish a compliance lookup without re-querying within the same session
+- Measurement: `successes / (successes + reformulations)` aggregated per variant from session logs
+- Threshold: ship if relative lift ≥ 7% with two-sided p-value < 0.05 and 95% CI excluding zero
+- Decision feed: drives the primary `SHIP_B` / `KEEP_A` / `RUN_MORE_DATA` outcome
+
+### 2. Accuracy — Retrieval Quality Score (secondary)
+
+- Metric: mean retriever relevance score for the top-k chunks returned per query
+- Measurement: average of `RETRIEVAL_SCORE` histogram observations from Prometheus per variant
+- Threshold: must not regress more than 0.05 absolute vs control; investigate if regression
+- Decision feed: blocks `SHIP_B` if accuracy regresses materially even with positive primary lift
+
+### 3. Latency — p99 End-to-End Response Time (guardrail)
+
+- Metric: 99th percentile of `request_latency_seconds` per variant
+- Measurement: Prometheus histogram_quantile over the experiment window
+- Threshold: p99 ≤ `AB_LATENCY_GUARDRAIL_MS` (default 2,300 ms)
+- Decision feed: hard guardrail — failure forces `RUN_MORE_DATA` regardless of primary lift
+
+### 4. Groundedness — Empty Retrieval Rate + Evaluated Groundedness Spot Check
+
+- Operational metric: `empty_retrieval_total / request_total` rate from Prometheus
+- Threshold (operational): ≤ `EMPTY_RETRIEVAL_ALERT_THRESHOLD` (default 0.15)
+- Evaluated metric: groundedness rubric score on a sampled review batch (LLM-judge or human reviewer)
+- Threshold (evaluated): mean groundedness ≥ 0.80 on the review sample
+- Decision feed: groundedness is not the primary online decision metric because it requires an evaluator pipeline, but the operational empty-retrieval rate is treated as a guardrail and a regression in the evaluated sample blocks rollout
+
+### Additional Operational Guardrails
+
+- Request error rate ≤ `AB_ERROR_GUARDRAIL_RATE` (default 0.03)
+- Cost per query ≤ `AB_COST_GUARDRAIL` (default $0.015)
 
 ## Randomization Method
 

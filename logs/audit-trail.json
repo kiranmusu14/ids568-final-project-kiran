@@ -1,6 +1,85 @@
-{"event_id": "evt-001", "event_type": "MODEL_DEPLOYED", "timestamp": "2026-04-22T21:10:23+00:00", "actor": "mlops_architect", "resource_id": "rag-service", "action": "deploy baseline", "details": {"version": "1.0.0"}, "previous_hash": "GENESIS", "event_hash": "068eceba7cec34782a41ef77c2a4db039bb1b8004bd076c2ab8b9ed9aef44a92"}
-{"event_id": "evt-002", "event_type": "PROMPT_TEMPLATE_CHANGED", "timestamp": "2026-04-22T21:10:24+00:00", "actor": "mlops_architect", "resource_id": "prompt-template", "action": "promote prompt", "details": {"template_version": "rag-v3"}, "previous_hash": "068eceba7cec34782a41ef77c2a4db039bb1b8004bd076c2ab8b9ed9aef44a92", "event_hash": "9342f23d1e0804e2846c8ee83f4c32e69409e7dcbdfca19bec2dcbea847adff7"}
-{"event_id": "evt-003", "event_type": "KNOWLEDGE_BASE_UPDATED", "timestamp": "2026-04-22T21:10:25+00:00", "actor": "data_engineer", "resource_id": "kb-index", "action": "refresh controls corpus", "details": {"documents_added": 14}, "previous_hash": "9342f23d1e0804e2846c8ee83f4c32e69409e7dcbdfca19bec2dcbea847adff7", "event_hash": "ceb78ee4e642c68dfe4d7c1b45db159727fb3a6448bcf0e76f17b996c40d2260"}
-{"event_id": "evt-004", "event_type": "APPROVAL_GRANTED", "timestamp": "2026-04-22T21:10:26+00:00", "actor": "governance_lead", "resource_id": "release-ticket", "action": "approve guarded rollout", "details": {"ticket": "CAB-568"}, "previous_hash": "ceb78ee4e642c68dfe4d7c1b45db159727fb3a6448bcf0e76f17b996c40d2260", "event_hash": "d0b0a215a974c306efb0b892ce125d510cffd76735ddaa63b30a0a40827b0848"}
-{"event_id": "evt-005", "event_type": "MONITORING_ALERT", "timestamp": "2026-04-22T21:10:27+00:00", "actor": "oncall_engineer", "resource_id": "grafana-alert", "action": "empty retrieval alert fired", "details": {"empty_retrieval_rate": 0.17}, "previous_hash": "d0b0a215a974c306efb0b892ce125d510cffd76735ddaa63b30a0a40827b0848", "event_hash": "7fb4ec5b774b80b56dfe32857816511ed40b667ae3b202d412b39389888d6a96"}
-{"event_id": "evt-006", "event_type": "INTERVENTION", "timestamp": "2026-04-22T21:10:28+00:00", "actor": "oncall_engineer", "resource_id": "retriever-config", "action": "raise retrieval top-k", "details": {"top_k": 4}, "previous_hash": "7fb4ec5b774b80b56dfe32857816511ed40b667ae3b202d412b39389888d6a96", "event_hash": "c2ea522cf45d3e38e49938adf433ac379e7ad01558e76e237da2a8e6f67ec502"}
+{
+  "schema_version": "1.0.0",
+  "hash_algorithm": "sha256",
+  "event_count": 6,
+  "events": [
+    {
+      "event_id": "evt-001",
+      "event_type": "MODEL_DEPLOYED",
+      "timestamp": "2026-04-22T21:10:23+00:00",
+      "actor": "mlops_architect",
+      "resource_id": "rag-service",
+      "action": "deploy baseline",
+      "details": {
+        "version": "1.0.0"
+      },
+      "previous_hash": "GENESIS",
+      "event_hash": "068eceba7cec34782a41ef77c2a4db039bb1b8004bd076c2ab8b9ed9aef44a92"
+    },
+    {
+      "event_id": "evt-002",
+      "event_type": "PROMPT_TEMPLATE_CHANGED",
+      "timestamp": "2026-04-22T21:10:24+00:00",
+      "actor": "mlops_architect",
+      "resource_id": "prompt-template",
+      "action": "promote prompt",
+      "details": {
+        "template_version": "rag-v3"
+      },
+      "previous_hash": "068eceba7cec34782a41ef77c2a4db039bb1b8004bd076c2ab8b9ed9aef44a92",
+      "event_hash": "9342f23d1e0804e2846c8ee83f4c32e69409e7dcbdfca19bec2dcbea847adff7"
+    },
+    {
+      "event_id": "evt-003",
+      "event_type": "KNOWLEDGE_BASE_UPDATED",
+      "timestamp": "2026-04-22T21:10:25+00:00",
+      "actor": "data_engineer",
+      "resource_id": "kb-index",
+      "action": "refresh controls corpus",
+      "details": {
+        "documents_added": 14
+      },
+      "previous_hash": "9342f23d1e0804e2846c8ee83f4c32e69409e7dcbdfca19bec2dcbea847adff7",
+      "event_hash": "ceb78ee4e642c68dfe4d7c1b45db159727fb3a6448bcf0e76f17b996c40d2260"
+    },
+    {
+      "event_id": "evt-004",
+      "event_type": "APPROVAL_GRANTED",
+      "timestamp": "2026-04-22T21:10:26+00:00",
+      "actor": "governance_lead",
+      "resource_id": "release-ticket",
+      "action": "approve guarded rollout",
+      "details": {
+        "ticket": "CAB-568"
+      },
+      "previous_hash": "ceb78ee4e642c68dfe4d7c1b45db159727fb3a6448bcf0e76f17b996c40d2260",
+      "event_hash": "d0b0a215a974c306efb0b892ce125d510cffd76735ddaa63b30a0a40827b0848"
+    },
+    {
+      "event_id": "evt-005",
+      "event_type": "MONITORING_ALERT",
+      "timestamp": "2026-04-22T21:10:27+00:00",
+      "actor": "oncall_engineer",
+      "resource_id": "grafana-alert",
+      "action": "empty retrieval alert fired",
+      "details": {
+        "empty_retrieval_rate": 0.17
+      },
+      "previous_hash": "d0b0a215a974c306efb0b892ce125d510cffd76735ddaa63b30a0a40827b0848",
+      "event_hash": "7fb4ec5b774b80b56dfe32857816511ed40b667ae3b202d412b39389888d6a96"
+    },
+    {
+      "event_id": "evt-006",
+      "event_type": "INTERVENTION",
+      "timestamp": "2026-04-22T21:10:28+00:00",
+      "actor": "oncall_engineer",
+      "resource_id": "retriever-config",
+      "action": "raise retrieval top-k",
+      "details": {
+        "top_k": 4
+      },
+      "previous_hash": "7fb4ec5b774b80b56dfe32857816511ed40b667ae3b202d412b39389888d6a96",
+      "event_hash": "c2ea522cf45d3e38e49938adf433ac379e7ad01558e76e237da2a8e6f67ec502"
+    }
+  ]
+}

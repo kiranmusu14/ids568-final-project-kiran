@@ -8,6 +8,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from src.common.config import settings
+from src.monitoring.instrumentation import REQUEST_COUNT, REQUEST_LATENCY
 from src.monitoring.service import _simulate_rag
 
 
@@ -21,11 +22,20 @@ QUERIES = [
 
 
 def run_simulation(iterations: int = 200, seed: int = settings.simulation_seed) -> list[dict[str, object]]:
+    """Drive the RAG simulation outside the FastAPI route.
+
+    The route handler in service.py records request latency once at the
+    boundary; when running the simulator directly we have to record it
+    here so the metric is exercised exactly once per simulated request.
+    """
     rng = random.Random(seed)
     records = []
     for _ in range(iterations):
         query = rng.choice(QUERIES)
-        records.append(_simulate_rag(query, rng=rng))
+        result = _simulate_rag(query, rng=rng)
+        REQUEST_LATENCY.labels(route="/query").observe(result["latency_seconds"])
+        REQUEST_COUNT.labels(route="/query", status="success").inc()
+        records.append(result)
     return records
 
 

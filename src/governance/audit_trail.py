@@ -94,19 +94,47 @@ def build_audit_log() -> list[AuditEvent]:
     return events
 
 
+AUDIT_LOG_SCHEMA_VERSION = "1.0.0"
+
+
+def _events_payload(events: list[AuditEvent]) -> dict[str, Any]:
+    """Serialize events as a single valid JSON document.
+
+    The file is one JSON object so `json.load()` succeeds without any
+    line-by-line parsing. Each event still carries previous_hash and
+    event_hash, so the hash chain is preserved end to end.
+    """
+    return {
+        "schema_version": AUDIT_LOG_SCHEMA_VERSION,
+        "hash_algorithm": settings.audit_hash_algorithm,
+        "event_count": len(events),
+        "events": [asdict(event) for event in events],
+    }
+
+
 def write_audit_log(path: Path | None = None) -> Path:
     output = path or ROOT / "logs" / settings.audit_trail_filename
     output.parent.mkdir(parents=True, exist_ok=True)
     events = build_audit_log()
-    output.write_text("\n".join(json.dumps(asdict(event)) for event in events) + "\n")
+    output.write_text(json.dumps(_events_payload(events), indent=2) + "\n")
     return output
+
+
+def _load_events(source: Path) -> list[dict[str, Any]]:
+    """Read events from either the canonical JSON document or legacy JSONL."""
+    raw = source.read_text().strip()
+    if not raw:
+        return []
+    if raw.startswith("{"):
+        document = json.loads(raw)
+        return list(document.get("events", []))
+    return [json.loads(line) for line in raw.splitlines() if line.strip()]
 
 
 def verify_audit_log(path: Path | None = None) -> bool:
     source = path or ROOT / "logs" / settings.audit_trail_filename
     previous_hash = "GENESIS"
-    for line in source.read_text().splitlines():
-        payload = json.loads(line)
+    for payload in _load_events(source):
         expected = _hash(
             json.dumps(
                 {

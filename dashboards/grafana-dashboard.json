@@ -71,7 +71,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "avg(ids568_rag_empty_retrieval_rate)"
+          "expr": "sum(rate(ids568_rag_empty_retrieval_total[5m])) / sum(rate(ids568_rag_request_total[5m]))"
         }
       ]
     },

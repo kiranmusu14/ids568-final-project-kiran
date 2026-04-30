@@ -20,7 +20,7 @@ from pydantic import BaseModel
 
 from src.common.config import settings
 from src.monitoring.instrumentation import (
-    EMPTY_RETRIEVAL_RATE,
+    EMPTY_RETRIEVAL_TOTAL,
     QUERY_LENGTH,
     REQUEST_COUNT,
     REQUEST_ERRORS,
@@ -79,9 +79,9 @@ def _simulate_rag(query: str, rng: random.Random | None = None) -> dict[str, Any
     QUERY_LENGTH.labels(route=route).observe(token_count)
     RESPONSE_LENGTH.labels(route=route).observe(response_tokens)
     TTFT_SECONDS.labels(route=route).observe(ttft)
-    REQUEST_LATENCY.labels(route=route).observe(total_latency)
     TOKEN_THROUGHPUT.labels(route=route).set(throughput)
-    EMPTY_RETRIEVAL_RATE.labels(route=route).set(empty_retrieval)
+    if empty_retrieval:
+        EMPTY_RETRIEVAL_TOTAL.labels(route=route).inc()
     for score in retrieval_scores:
         RETRIEVAL_SCORE.labels(route=route).observe(score)
 
@@ -118,6 +118,9 @@ def query(payload: QueryRequest) -> dict[str, Any]:
         REQUEST_ERRORS.labels(route=route, error_type=type(exc).__name__).inc()
         raise
     finally:
+        # Latency is recorded once at the route boundary so /metrics reports
+        # the actual end-to-end time including FastAPI overhead, not the
+        # simulated total computed inside _simulate_rag.
         REQUEST_LATENCY.labels(route=route).observe(max(0.001, time.perf_counter() - started))
 
 

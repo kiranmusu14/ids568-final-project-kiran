@@ -61,9 +61,12 @@ RETRIEVAL_SCORE = Histogram(
     buckets=(0.0, 0.2, 0.4, 0.55, 0.7, 0.85, 1.0),
     registry=REGISTRY,
 )
-EMPTY_RETRIEVAL_RATE = Gauge(
-    "empty_retrieval_rate",
-    "Fraction of requests with no chunk above the score threshold",
+EMPTY_RETRIEVAL_TOTAL = Counter(
+    "empty_retrieval_total",
+    "Requests where no retrieved chunk exceeded the score threshold. "
+    "Compute the empty-retrieval rate in Prometheus via "
+    "rate(ids568_rag_empty_retrieval_total[5m]) / rate(ids568_rag_request_total[5m]) "
+    "instead of storing a per-request rate as a gauge.",
     ["route"],
     namespace=settings.prometheus_namespace,
     registry=REGISTRY,
@@ -84,6 +87,9 @@ RESPONSE_LENGTH = Histogram(
     buckets=settings.response_length_buckets,
     registry=REGISTRY,
 )
+
+
+EMPTY_RETRIEVAL_TOTAL.labels(route="/query")
 
 
 def metrics_payload() -> bytes:
