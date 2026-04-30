@@ -108,6 +108,8 @@ python -m unittest discover -s tests
 - Live metrics endpoint screenshot: [visualizations/metrics-endpoint-screenshot.png](visualizations/metrics-endpoint-screenshot.png)
 - Interpretation document: [docs/dashboard-interpretation.md](docs/dashboard-interpretation.md)
 
+The live Grafana screenshot was produced by running the official Docker images `prom/prometheus:v2.55.1` and `grafana/grafana-oss:11.3.0` locally, with Prometheus scraping the FastAPI `/metrics` endpoint and Grafana importing `dashboards/grafana-dashboard.json`. The repository intentionally does not include a Dockerfile or compose file; Docker was used only as a local runtime for screenshot verification.
+
 ### Component 2 — A/B Test Design & Simulation
 - Experiment specification: [docs/experiment-specification.md](docs/experiment-specification.md)
 - Power analysis script: [src/ab_test/power_analysis.py](src/ab_test/power_analysis.py)
