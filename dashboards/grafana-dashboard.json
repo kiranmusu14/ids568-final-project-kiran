@@ -1,85 +1,200 @@
 {
   "title": "IDS 568 Agentic RAG Operations",
+  "uid": "ids568-rag-ops",
   "schemaVersion": 39,
-  "version": 2,
+  "version": 3,
+  "refresh": "15s",
+  "timezone": "browser",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
   "panels": [
     {
+      "id": 1,
       "title": "Request Rate",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "sum(rate(ids568_rag_request_total[5m]))"
         }
       ]
     },
     {
+      "id": 2,
       "title": "Error Rate",
       "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
       "targets": [
         {
-          "expr": "sum(rate(ids568_rag_request_total{status=\"error\"}[5m])) / clamp_min(sum(rate(ids568_rag_request_total[5m])), 0.001)"
+          "refId": "A",
+          "expr": "(sum(rate(ids568_rag_request_total{status=\"error\"}[5m])) or vector(0)) / clamp_min(sum(rate(ids568_rag_request_total[5m])), 0.001)"
         }
       ]
     },
     {
+      "id": 3,
       "title": "End-to-End Latency p95",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "histogram_quantile(0.95, sum(rate(ids568_rag_request_latency_seconds_bucket[5m])) by (le))"
         }
       ]
     },
     {
+      "id": 4,
       "title": "TTFT p95",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "histogram_quantile(0.95, sum(rate(ids568_rag_ttft_seconds_bucket[5m])) by (le))"
         }
       ]
     },
     {
+      "id": 5,
       "title": "Token Throughput",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "avg(ids568_rag_token_throughput_tps)"
         }
       ]
     },
     {
+      "id": 6,
       "title": "Retrieval Score Distribution",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "sum(rate(ids568_rag_retrieval_score_bucket[5m])) by (le)"
         }
       ]
     },
     {
+      "id": 7,
       "title": "Response Length Distribution",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "sum(rate(ids568_rag_response_length_tokens_bucket[5m])) by (le)"
         }
       ]
     },
     {
+      "id": 8,
       "title": "Empty Retrieval Rate",
       "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
       "targets": [
         {
-          "expr": "sum(rate(ids568_rag_empty_retrieval_total[5m])) / sum(rate(ids568_rag_request_total[5m]))"
+          "refId": "A",
+          "expr": "(sum(rate(ids568_rag_empty_retrieval_total[5m])) or vector(0)) / clamp_min(sum(rate(ids568_rag_request_total[5m])), 0.001)"
         }
       ]
     },
     {
+      "id": 9,
       "title": "Query Length Distribution",
       "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
       "targets": [
         {
+          "refId": "A",
           "expr": "sum(rate(ids568_rag_query_length_tokens_bucket[5m])) by (le)"
         }
       ]

@@ -1,6 +1,6 @@
 # Recommendation Memo
 
-The simulated A/B test produces a recommendation of `RUN_MORE_DATA`. The treatment (top-k=4) delivers a statistically significant improvement in task completion — 8.9% relative lift (absolute lift 5.5 pp, 95% CI [2.6 pp, 8.5 pp], z=3.68, p=0.00023) — and the error-rate guardrail (1.75% vs. 3.0% ceiling), cost guardrail ($0.0138 vs. $0.015 ceiling), retrieval-score guardrail (+0.028 vs. control), empty-retrieval guardrail (10.1% vs. 15.0% ceiling), and groundedness spot-check guardrail (0.840 vs. 0.800 floor) pass cleanly. The statistical case for Variant B is strong.
+The simulated A/B test produces a recommendation of `RUN_MORE_DATA`. The treatment (top-k=4) delivers a statistically significant improvement in task completion — 9.0% relative lift (absolute lift 5.6 pp, 95% CI [2.6 pp, 8.5 pp], z=3.71, p=0.00021) — and the error-rate guardrail (1.75% vs. 3.0% ceiling), cost guardrail ($0.0138 vs. $0.015 ceiling), retrieval-score guardrail (+0.028 vs. control), empty-retrieval guardrail (10.0% vs. 15.0% ceiling), and groundedness spot-check guardrail (0.840 vs. 0.800 floor) pass cleanly. The statistical case for Variant B is strong.
 
 The blocking issue is the p99 latency guardrail. Treatment p99 latency reached 2,616 ms against a 2,300 ms ceiling, a 14% overage. Because the guardrail failed, the decision rule in `src/ab_test/simulate_experiment.py` correctly outputs `RUN_MORE_DATA` rather than `SHIP_B`. This is the expected behavior: a better primary metric does not override an operational safety ceiling.
 

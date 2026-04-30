@@ -53,7 +53,7 @@ The experiment evaluates four distinct metric categories. Each category lists th
 
 ## Randomization Method
 
-Users are deterministically assigned with a hash of `user_id` and experiment name. That keeps the assignment stable across repeated sessions and avoids contamination from users seeing both variants.
+Users are deterministically assigned with a hash of `user_id` and experiment name. That keeps the assignment stable across repeated sessions and avoids contamination from users seeing both variants. The offline simulator continues enrollment until both hashed arms reach the powered sample size, so the generated output has at least the required `2,003` users in each arm.
 
 ## Power Analysis
 
@@ -64,7 +64,7 @@ Inputs are loaded from `.env`:
 - Alpha: `0.05`
 - Power: `0.80`
 
-Using the two-proportion sample-size formula from Module 8, the required sample size is computed in `src/ab_test/power_analysis.py`. The simulation uses that computed sample size per group rather than a hand-entered constant. Under the current assumptions, the experiment needs roughly 2,000 users per arm (computed: 2,003), which is enough to detect a practical improvement while keeping false positives controlled.
+Using the two-proportion sample-size formula from Module 8, the required sample size is computed in `src/ab_test/power_analysis.py`. The simulation uses that computed sample size per group rather than a hand-entered constant. Under the current assumptions, the experiment needs roughly 2,000 users per arm (computed: 2,003), and `src/ab_test/simulate_experiment.py` enrolls until both arms reach that target exactly. That is enough to detect a practical improvement while keeping false positives controlled.
 
 ## Duration Justification
 

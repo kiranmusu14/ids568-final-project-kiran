@@ -2,7 +2,7 @@
 
 ## Audit Outcome
 
-The repository was already aligned with the target structure listed in the prompt: every required path under `src/`, `docs/`, `dashboards/`, `logs/`, and `visualizations/` existed and was non-empty, all `.py` files compiled, `verify_submission.sh` passed, and total size was 41 MB. No structural reorganization or stub creation was required. The fixes below address the specific weaknesses called out in the prompt that automated existence checks would not catch.
+The repository is aligned with the target structure listed in the prompt: every required path under `src/`, `docs/`, `dashboards/`, `logs/`, and `visualizations/` exists and is non-empty, all `.py` files compile, `verify_submission.sh` passes, and total size remains well under the 100 MB ceiling. The fixes below address the specific weaknesses called out in the prompt that automated existence checks would not catch.
 
 ## What Was Fixed
 
@@ -36,13 +36,32 @@ Before: the script greps `.env` for `AUDIT_TRAIL_FILENAME` with `2>/dev/null`, b
 
 Fix: the script now bootstraps `.env` from `.env.example` automatically when `.env` is absent, falls back to reading `.env.example` for the audit filename if `.env` is still unavailable, and uses `audit-trail.json` as the final default. The `set -e` policy is preserved.
 
+### 5. Balanced A/B enrollment (`src/ab_test/simulate_experiment.py`)
+
+Before: the simulator hashed exactly `2 * n_per_group` users and accepted the natural imbalance from deterministic randomization. That left the treatment arm slightly below the computed target in one run.
+
+Fix: the simulator still uses stable hash assignment, but it now continues enrollment until both control and treatment reach the computed powered sample size. The generated output now has exactly 2,003 users per arm under the current configuration.
+
+### 6. Actual Grafana UI evidence (`dashboards/grafana-dashboard.json`, `visualizations/grafana-ui-screenshot.png`)
+
+Before: the repository included a generated dashboard export and a live `/metrics` screenshot, but not an imported Grafana UI capture.
+
+Fix: added a stable dashboard UID, explicit Prometheus datasource references, grid positions, and safer zero-series PromQL for the stat panels. The new `visualizations/grafana-ui-screenshot.png` was captured from a live Grafana container backed by Prometheus scraping the FastAPI `/metrics` endpoint.
+
+### 7. Unit tests (`tests/test_core_behaviors.py`, `verify_submission.sh`)
+
+Before: the repo had smoke checks but no dedicated test directory.
+
+Fix: added standard-library `unittest` coverage for A/B balanced enrollment, recommendation decision logic, PSI classification, and audit-trail hash-chain verification. `verify_submission.sh` now runs these tests before regenerating artifacts.
+
 ## What Was Verified
 
 - `find . -name "*.py" -exec python -m py_compile {} \;` — clean across `src/` (excluding `venv/`)
 - `python -m src.generate_project_artifacts` — exercised via `verify_submission.sh` (artifact generation step)
-- `bash verify_submission.sh` — passes end-to-end: file existence, Python syntax, smoke test, RAG metric emission (5 required metrics present in `/metrics`), audit-trail hash-chain integrity, repo size
+- `python -m unittest discover -s tests` — covers A/B decision logic, balanced assignment, PSI classification, and audit-trail verification
+- `bash verify_submission.sh` — passes end-to-end: file existence, Python syntax, unit tests, smoke test, RAG metric emission (5 required metrics present in `/metrics`), audit-trail hash-chain integrity, repo size
 - Direct check that `ids568_rag_empty_retrieval_total` appears in `/metrics` after running the simulator (52 empty-retrieval events recorded across 200 simulated requests)
-- `du -sm .` → **41 MB**, well under the 100 MB ceiling
+- `du -sh .` → **43M**, well under the 100 MB ceiling
 
 ## What Was Not Changed (and Why)
 

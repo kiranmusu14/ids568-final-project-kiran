@@ -18,13 +18,15 @@ Audit Instructions:
    - `docs/model-card.md`
    - `logs/audit-trail.json`
    - `visualizations/dashboard-export.png`
+   - `visualizations/grafana-ui-screenshot.png`
+   - `tests/test_core_behaviors.py`
 6. Validate the repository against these major sections:
-   - Component 1: monitoring instrumentation, collector config, dashboard config, dashboard export, interpretation
+   - Component 1: monitoring instrumentation, collector config, dashboard config, dashboard export, live Grafana screenshot, interpretation
    - Component 2: experiment specification, sample size justification, simulation, statistics, recommendation memo
    - Component 3: system card, lineage diagram, risk register, audit trail with tamper detection
    - Component 4: drift scripts, PSI outputs, drift visualization, diagnostic reasoning, action plan
    - Component 5: system boundary diagram, governance review, risk matrix, CTO memo
-   - Repository requirements: README, setup scripts, pinned dependencies, reproducibility, root-level organization, file size, tagging note
+   - Repository requirements: README, setup scripts, pinned dependencies, reproducibility, unit tests, root-level organization, file size, tagging note
 7. Specifically verify these RAG-specific requirements from Module 8:
    - TTFT, token throughput, and retrieval-score monitoring
    - System card language rather than vendor-internal model claims

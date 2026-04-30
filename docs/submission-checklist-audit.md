@@ -7,7 +7,7 @@ This audit cross-references the IDS 568 final-project checklist against the curr
 - PASS: Component 1 metrics instrumentation is implemented in [src/monitoring/instrumentation.py](../src/monitoring/instrumentation.py) and integrated through [src/monitoring/service.py](../src/monitoring/service.py).
 - PASS: Component 1 collector config exists in [dashboards/prometheus.yml](../dashboards/prometheus.yml).
 - PASS: Component 1 Grafana dashboard config exists in [dashboards/grafana-dashboard.json](../dashboards/grafana-dashboard.json).
-- PASS: Component 1 dashboard export exists in [visualizations/dashboard-export.png](../visualizations/dashboard-export.png).
+- PASS: Component 1 dashboard export exists in [visualizations/dashboard-export.png](../visualizations/dashboard-export.png), and the imported live Grafana UI screenshot exists in [visualizations/grafana-ui-screenshot.png](../visualizations/grafana-ui-screenshot.png).
 - PASS: Component 1 interpretation covers health, bottlenecks, retrieval risk, and alert triggers in [docs/dashboard-interpretation.md](dashboard-interpretation.md).
 - PASS: Component 1 RAG-specific monitoring covers TTFT, token throughput, retrieval score, query length, response length, and empty-retrieval rate.
 
@@ -39,13 +39,14 @@ This audit cross-references the IDS 568 final-project checklist against the curr
 - PASS: Dependencies are pinned in [requirements.txt](../requirements.txt).
 - PASS: Setup scripts exist for Mac/Linux and Windows: [setup_env.sh](../setup_env.sh), [setup_env.bat](../setup_env.bat).
 - PASS: Automated verification exists in [verify_submission.sh](../verify_submission.sh).
+- PASS: Unit tests exist in [tests/test_core_behaviors.py](../tests/test_core_behaviors.py) and are run by [verify_submission.sh](../verify_submission.sh).
 - PASS: Repository size is under 100 MB.
 - PASS: Git remote naming has been verified as `ids568-final-project-kiran`.
 - PASS: Git tag `submission` is present locally and pushed to the configured remote.
 
 ## Rubric Evidence Map
 
-- Component 1: [src/monitoring/instrumentation.py](../src/monitoring/instrumentation.py), [src/monitoring/service.py](../src/monitoring/service.py), [dashboards/grafana-dashboard.json](../dashboards/grafana-dashboard.json), [visualizations/dashboard-export.png](../visualizations/dashboard-export.png), [docs/dashboard-interpretation.md](dashboard-interpretation.md)
+- Component 1: [src/monitoring/instrumentation.py](../src/monitoring/instrumentation.py), [src/monitoring/service.py](../src/monitoring/service.py), [dashboards/grafana-dashboard.json](../dashboards/grafana-dashboard.json), [visualizations/dashboard-export.png](../visualizations/dashboard-export.png), [visualizations/grafana-ui-screenshot.png](../visualizations/grafana-ui-screenshot.png), [docs/dashboard-interpretation.md](dashboard-interpretation.md)
 - Component 2: [docs/experiment-specification.md](experiment-specification.md), [src/ab_test/power_analysis.py](../src/ab_test/power_analysis.py), [src/ab_test/simulate_experiment.py](../src/ab_test/simulate_experiment.py), [visualizations/ab_test_results.json](../visualizations/ab_test_results.json), [docs/recommendation-memo.md](recommendation-memo.md)
 - Component 3: [docs/model-card.md](model-card.md), [docs/lineage-diagram.png](lineage-diagram.png), [docs/risk-register.md](risk-register.md), [logs/audit-trail.json](../logs/audit-trail.json), [src/governance/audit_trail.py](../src/governance/audit_trail.py)
 - Component 4: [src/drift/psi.py](../src/drift/psi.py), [src/drift/analyze_drift.py](../src/drift/analyze_drift.py), [visualizations/drift-over-time.png](../visualizations/drift-over-time.png), [visualizations/drift_summary.json](../visualizations/drift_summary.json), [docs/drift-diagnostic-report.md](drift-diagnostic-report.md)

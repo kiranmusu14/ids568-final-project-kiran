@@ -39,7 +39,7 @@ This system supports internal compliance research workflows by retrieving policy
 - p95 TTFT is centered near 0.2 seconds in the simulated load test
 - End-to-end latency remains below two seconds for most requests
 - Token throughput remains stable during synthetic traffic
-- A/B simulation shows Variant B improves task completion by 8.9% relative lift, but deployment remains blocked by the p99 latency guardrail
+- A/B simulation shows Variant B improves task completion by 9.0% relative lift, but deployment remains blocked by the p99 latency guardrail
 - Response length is monitored as an observable RAG distribution
 - Retrieval quality shows meaningful degradation under the current drift scenario, which is the dominant operational risk
 

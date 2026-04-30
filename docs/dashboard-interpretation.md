@@ -6,7 +6,7 @@ Prometheus and Grafana were selected as the monitoring stack for three reasons. 
 
 The dashboard layout follows a left-to-right signal hierarchy: infrastructure health (request rate, error rate, latency) on the left, and RAG-specific quality signals (TTFT, token throughput, retrieval score distribution, response length, query length, and empty retrieval rate) on the right. That ordering surfaces the distinction between serving-layer health and evidence-quality health, which is the core diagnostic split in an agentic RAG system.
 
-The supplemental screenshot `visualizations/metrics-endpoint-screenshot.png` verifies the live FastAPI `/metrics` endpoint that Prometheus scrapes. It shows Prometheus-formatted metric families for request count, request latency, request errors, TTFT, token throughput, retrieval score, empty retrieval events, query length, and response length, matching the metrics consumed by the Grafana dashboard configuration.
+The live Grafana screenshot `visualizations/grafana-ui-screenshot.png` verifies that `dashboards/grafana-dashboard.json` was imported into Grafana with Prometheus as the datasource and populated from live FastAPI traffic. The supplemental screenshot `visualizations/metrics-endpoint-screenshot.png` verifies the FastAPI `/metrics` endpoint that Prometheus scrapes. It shows Prometheus-formatted metric families for request count, request latency, request errors, TTFT, token throughput, retrieval score, empty retrieval events, query length, and response length, matching the metrics consumed by the Grafana dashboard configuration.
 
 ## Dashboard Findings
 

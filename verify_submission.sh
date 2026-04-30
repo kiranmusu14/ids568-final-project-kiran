@@ -25,6 +25,7 @@ required_files=(
   "requirements.txt"
   "setup_env.sh"
   "setup_env.bat"
+  "tests/test_core_behaviors.py"
   "src/monitoring/instrumentation.py"
   "src/monitoring/service.py"
   "src/ab_test/power_analysis.py"
@@ -47,6 +48,8 @@ required_files=(
   "dashboards/grafana-dashboard.json"
   "logs/${AUDIT_TRAIL_FILENAME}"
   "visualizations/dashboard-export.png"
+  "visualizations/grafana-ui-screenshot.png"
+  "visualizations/metrics-endpoint-screenshot.png"
   "visualizations/ab-test-summary.png"
   "visualizations/drift-over-time.png"
 )
@@ -67,7 +70,11 @@ echo "Running Python syntax checks..."
   src/drift/psi.py \
   src/drift/analyze_drift.py \
   src/governance/audit_trail.py \
-  src/generate_project_artifacts.py
+  src/generate_project_artifacts.py \
+  tests/test_core_behaviors.py
+
+echo "Running unit tests..."
+"$PYTHON_BIN" -m unittest discover -s tests
 
 echo "Running artifact generation and component smoke tests..."
 "$PYTHON_BIN" src/generate_project_artifacts.py

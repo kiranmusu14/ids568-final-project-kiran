@@ -43,6 +43,19 @@ def assign_variant(user_id: str, experiment_name: str, control_weight: float = 0
     return "control" if ratio < control_weight else "treatment"
 
 
+def build_balanced_assignments(n_per_group: int, experiment_name: str) -> dict[str, list[str]]:
+    """Enroll hashed users until each variant reaches the powered sample size."""
+    assignments: dict[str, list[str]] = {"control": [], "treatment": []}
+    index = 0
+    while len(assignments["control"]) < n_per_group or len(assignments["treatment"]) < n_per_group:
+        user_id = f"user_{index:05d}"
+        variant = assign_variant(user_id, experiment_name)
+        if len(assignments[variant]) < n_per_group:
+            assignments[variant].append(user_id)
+        index += 1
+    return assignments
+
+
 def two_proportion_ztest(control_success: int, control_total: int, treatment_success: int, treatment_total: int) -> dict[str, float | bool]:
     p_control = control_success / control_total
     p_treatment = treatment_success / treatment_total
@@ -66,18 +79,24 @@ def two_proportion_ztest(control_success: int, control_total: int, treatment_suc
     }
 
 
+def choose_recommendation(stats_result: dict[str, float | bool], guardrails: dict[str, bool]) -> str:
+    all_guardrails_pass = all(guardrails.values())
+    if stats_result["significant"] and stats_result["absolute_lift"] > 0 and all_guardrails_pass:
+        return "SHIP_B"
+    if stats_result["significant"] and stats_result["absolute_lift"] > 0:
+        return "RUN_MORE_DATA"
+    return "KEEP_A"
+
+
 def run_experiment(seed: int = 568) -> dict[str, object]:
     rng = random.Random(seed)
     n_per_group = calculate_sample_size(
         settings.ab_baseline_task_success,
         settings.ab_min_detectable_effect,
     )
-    total_users = n_per_group * 2
-    user_ids = [f"user_{index:05d}" for index in range(total_users)]
-    assignments = [assign_variant(user_id, "rag_topk_experiment") for user_id in user_ids]
-
-    control_total = sum(1 for variant in assignments if variant == "control")
-    treatment_total = total_users - control_total
+    assignments = build_balanced_assignments(n_per_group, "rag_topk_experiment")
+    control_total = len(assignments["control"])
+    treatment_total = len(assignments["treatment"])
 
     control_successes = [1 if rng.random() < settings.ab_baseline_task_success else 0 for _ in range(control_total)]
     treatment_rate = settings.ab_baseline_task_success * (
@@ -153,23 +172,15 @@ def run_experiment(seed: int = 568) -> dict[str, object]:
     groundedness_treatment = _mean(treatment_groundedness)
     groundedness_guardrail = groundedness_treatment >= settings.ab_groundedness_guardrail
 
-    all_guardrails_pass = all(
-        [
-            latency_guardrail,
-            error_guardrail,
-            cost_guardrail,
-            retrieval_guardrail,
-            empty_retrieval_guardrail,
-            groundedness_guardrail,
-        ]
-    )
-
-    if stats_result["significant"] and stats_result["absolute_lift"] > 0 and all_guardrails_pass:
-        recommendation = "SHIP_B"
-    elif stats_result["significant"] and stats_result["absolute_lift"] > 0:
-        recommendation = "RUN_MORE_DATA"
-    else:
-        recommendation = "KEEP_A"
+    guardrails = {
+        "latency_pass": latency_guardrail,
+        "error_pass": error_guardrail,
+        "cost_pass": cost_guardrail,
+        "retrieval_score_pass": retrieval_guardrail,
+        "empty_retrieval_pass": empty_retrieval_guardrail,
+        "groundedness_pass": groundedness_guardrail,
+    }
+    recommendation = choose_recommendation(stats_result, guardrails)
 
     result = {
         "sample_size_per_group": n_per_group,
@@ -193,14 +204,7 @@ def run_experiment(seed: int = 568) -> dict[str, object]:
             "treatment_groundedness_score": float(groundedness_treatment),
             "groundedness_review_sample": review_n,
         },
-        "guardrails": {
-            "latency_pass": latency_guardrail,
-            "error_pass": error_guardrail,
-            "cost_pass": cost_guardrail,
-            "retrieval_score_pass": retrieval_guardrail,
-            "empty_retrieval_pass": empty_retrieval_guardrail,
-            "groundedness_pass": groundedness_guardrail,
-        },
+        "guardrails": guardrails,
         "statistics": stats_result,
         "recommendation": recommendation,
     }

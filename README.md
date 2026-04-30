@@ -40,7 +40,8 @@ src/
 docs/                       — all written deliverables
 dashboards/                 — Prometheus and Grafana configuration
 logs/                       — audit trail output
-visualizations/             — drift charts, dashboard export, metrics endpoint screenshot, experiment charts
+visualizations/             — drift charts, dashboard exports, metrics endpoint screenshot, experiment charts
+tests/                      — unit tests for statistics, drift, and audit behaviors
 ```
 
 ## Setup
@@ -81,7 +82,8 @@ The repository reproduces all outputs in under 10 minutes on a clean machine:
 2. Install pinned dependencies from `requirements.txt`.
 3. Copy `.env.example` to `.env` (or let `verify_submission.sh` do it).
 4. Run `python -m src.generate_project_artifacts`.
-5. Run `./verify_submission.sh` — all checks must pass with "Submission sanity checks passed."
+5. Run `python -m unittest discover -s tests`.
+6. Run `./verify_submission.sh` — all checks must pass with "Submission sanity checks passed."
 
 Individual scripts can also be run directly:
 
@@ -91,6 +93,7 @@ python src/ab_test/simulate_experiment.py
 python src/drift/analyze_drift.py
 python src/monitoring/simulate_traffic.py
 python src/governance/audit_trail.py
+python -m unittest discover -s tests
 ```
 
 ## Deliverable Links
@@ -101,6 +104,7 @@ python src/governance/audit_trail.py
 - Grafana dashboard config: [dashboards/grafana-dashboard.json](dashboards/grafana-dashboard.json)
 - Prometheus config: [dashboards/prometheus.yml](dashboards/prometheus.yml)
 - Dashboard export: [visualizations/dashboard-export.png](visualizations/dashboard-export.png)
+- Live Grafana UI screenshot: [visualizations/grafana-ui-screenshot.png](visualizations/grafana-ui-screenshot.png)
 - Live metrics endpoint screenshot: [visualizations/metrics-endpoint-screenshot.png](visualizations/metrics-endpoint-screenshot.png)
 - Interpretation document: [docs/dashboard-interpretation.md](docs/dashboard-interpretation.md)
 

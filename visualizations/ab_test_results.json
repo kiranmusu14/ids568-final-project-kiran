@@ -1,21 +1,21 @@
 {
   "sample_size_per_group": 2003,
-  "control_total": 2010,
-  "treatment_total": 1996,
-  "control_success_rate": 0.6218905472636815,
-  "treatment_success_rate": 0.6773547094188377,
+  "control_total": 2003,
+  "treatment_total": 2003,
+  "control_success_rate": 0.6215676485272091,
+  "treatment_success_rate": 0.6774837743384923,
   "p99_control_latency_ms": 2383.812350014481,
   "p99_treatment_latency_ms": 2615.6786905457175,
-  "control_error_rate": 0.015920398009950248,
-  "treatment_error_rate": 0.01753507014028056,
-  "control_cost_per_query": 0.011593050194359474,
-  "treatment_cost_per_query": 0.013811226219623966,
+  "control_error_rate": 0.01597603594608088,
+  "treatment_error_rate": 0.017473789316025962,
+  "control_cost_per_query": 0.011592530025485081,
+  "treatment_cost_per_query": 0.013833633809816207,
   "quality_metrics": {
-    "control_retrieval_score": 0.7096986437269719,
-    "treatment_retrieval_score": 0.7378688992467644,
-    "retrieval_score_delta": 0.028170255519792464,
-    "control_empty_retrieval_rate": 0.11592039800995024,
-    "treatment_empty_retrieval_rate": 0.10070140280561123,
+    "control_retrieval_score": 0.7097893975979348,
+    "treatment_retrieval_score": 0.7377845398897113,
+    "retrieval_score_delta": 0.027995142291776465,
+    "control_empty_retrieval_rate": 0.1163255117324014,
+    "treatment_empty_retrieval_rate": 0.10034947578632052,
     "control_groundedness_score": 0.8184465906781504,
     "treatment_groundedness_score": 0.8404897549529352,
     "groundedness_review_sample": 200
@@ -29,13 +29,13 @@
     "groundedness_pass": true
   },
   "statistics": {
-    "z_stat": 3.6788241310365506,
-    "p_value": 0.00023431176825217115,
+    "z_stat": 3.7088246020932947,
+    "p_value": 0.00020822359982197725,
     "significant": true,
-    "absolute_lift": 0.05546416215515615,
-    "relative_lift": 0.0891863727454911,
-    "ci_low": 0.025967754163178865,
-    "ci_high": 0.08496057014713343
+    "absolute_lift": 0.055916125811283135,
+    "relative_lift": 0.08995983935742982,
+    "ci_low": 0.02641694544619451,
+    "ci_high": 0.08541530617637176
   },
   "recommendation": "RUN_MORE_DATA"
 }
