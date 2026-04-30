@@ -27,7 +27,7 @@ The experiment evaluates four distinct metric categories. Each category lists th
 ### 2. Accuracy — Retrieval Quality Score (secondary)
 
 - Metric: mean retriever relevance score for the top-k chunks returned per query
-- Measurement: average of `RETRIEVAL_SCORE` histogram observations from Prometheus per variant
+- Measurement: average of `RETRIEVAL_SCORE` histogram observations from Prometheus per variant; in this repository's offline simulation, the equivalent per-variant means are emitted under `quality_metrics` in `visualizations/ab_test_results.json`
 - Threshold: must not regress more than 0.05 absolute vs control; investigate if regression
 - Decision feed: blocks `SHIP_B` if accuracy regresses materially even with positive primary lift
 
@@ -40,9 +40,9 @@ The experiment evaluates four distinct metric categories. Each category lists th
 
 ### 4. Groundedness — Empty Retrieval Rate + Evaluated Groundedness Spot Check
 
-- Operational metric: `empty_retrieval_total / request_total` rate from Prometheus
+- Operational metric: `empty_retrieval_total / request_total` rate from Prometheus, mirrored in the simulation as per-variant empty-retrieval rates
 - Threshold (operational): ≤ `EMPTY_RETRIEVAL_ALERT_THRESHOLD` (default 0.15)
-- Evaluated metric: groundedness rubric score on a sampled review batch (LLM-judge or human reviewer)
+- Evaluated metric: groundedness rubric score on a sampled review batch; the repository simulates this evaluated spot check because a human/LLM judge service is outside the local reproducibility scope
 - Threshold (evaluated): mean groundedness ≥ 0.80 on the review sample
 - Decision feed: groundedness is not the primary online decision metric because it requires an evaluator pipeline, but the operational empty-retrieval rate is treated as a guardrail and a regression in the evaluated sample blocks rollout
 

@@ -95,7 +95,7 @@ def _save_ab_visualization(result: dict[str, object]) -> None:
     draw.text((40, 20), "A/B Experiment Summary", fill="black", font=_font(28))
     _draw_bar(draw, 180, 340, 120, float(result["control_success_rate"]), 1.0, "#4e79a7", "A success")
     _draw_bar(draw, 360, 340, 120, float(result["treatment_success_rate"]), 1.0, "#59a14f", "B success")
-    _draw_bar(draw, 620, 340, 120, 0.0116, settings.ab_cost_guardrail * 1.2, "#9c755f", "A cost")
+    _draw_bar(draw, 620, 340, 120, float(result["control_cost_per_query"]), settings.ab_cost_guardrail * 1.2, "#9c755f", "A cost")
     _draw_bar(draw, 800, 340, 120, float(result["treatment_cost_per_query"]), settings.ab_cost_guardrail * 1.2, "#edc949", "B cost")
     draw.line((620, 120, 920, 120), fill="red", width=3)
     draw.text((620, 90), f"Cost guardrail: {settings.ab_cost_guardrail}", fill="red", font=_font(16))

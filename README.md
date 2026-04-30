@@ -45,6 +45,12 @@ visualizations/             — drift charts, dashboard export, experiment chart
 
 ## Setup
 
+Use Python 3.13 for the most reliable clean install. The pinned dependency set
+uses `pydantic-core==2.23.4`, which has prebuilt wheels for Python 3.13; Python
+3.14 may try to build from source and fail on systems without a compatible PyO3
+toolchain. The setup script automatically prefers `python3.13` when it is
+available.
+
 Mac/Linux:
 
 ```bash

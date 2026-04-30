@@ -4,13 +4,29 @@
   "treatment_total": 1996,
   "control_success_rate": 0.6218905472636815,
   "treatment_success_rate": 0.6773547094188377,
+  "p99_control_latency_ms": 2383.812350014481,
   "p99_treatment_latency_ms": 2615.6786905457175,
+  "control_error_rate": 0.015920398009950248,
   "treatment_error_rate": 0.01753507014028056,
+  "control_cost_per_query": 0.011593050194359474,
   "treatment_cost_per_query": 0.013811226219623966,
+  "quality_metrics": {
+    "control_retrieval_score": 0.7096986437269719,
+    "treatment_retrieval_score": 0.7378688992467644,
+    "retrieval_score_delta": 0.028170255519792464,
+    "control_empty_retrieval_rate": 0.11592039800995024,
+    "treatment_empty_retrieval_rate": 0.10070140280561123,
+    "control_groundedness_score": 0.8184465906781504,
+    "treatment_groundedness_score": 0.8404897549529352,
+    "groundedness_review_sample": 200
+  },
   "guardrails": {
     "latency_pass": false,
     "error_pass": true,
-    "cost_pass": true
+    "cost_pass": true,
+    "retrieval_score_pass": true,
+    "empty_retrieval_pass": true,
+    "groundedness_pass": true
   },
   "statistics": {
     "z_stat": 3.6788241310365506,

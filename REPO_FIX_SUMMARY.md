@@ -56,6 +56,6 @@ Fix: the script now bootstraps `.env` from `.env.example` automatically when `.e
 
 ## Remaining Limitations
 
-- **Diagrams are static PNGs** rather than mermaid/graphviz source. They are correct but cannot be re-rendered programmatically without recreating the source script. Acceptable for submission since the rubric calls for image artifacts.
-- **Groundedness evaluator pipeline is described, not built.** The experiment spec states groundedness is sampled by an LLM-judge or human reviewer; this submission provides the operational empty-retrieval-rate guardrail but not a running judge implementation. Consistent with the rubric's expectation that the experiment design be specified rather than fully executed.
-- **`.env` is still tracked in git** despite being added to `.gitignore`. This is intentional for the submission so a grader can clone and run without manually copying `.env.example` to `.env`. In a production repository, this entry would be untracked via `git rm --cached .env`.
+- **Diagrams are generated PNGs** from `src/generate_project_artifacts.py`. They are reproducible, but the editable source is Python drawing code rather than mermaid/graphviz.
+- **Groundedness is simulated locally.** The experiment now emits a groundedness spot-check score in `visualizations/ab_test_results.json`; a real human/LLM-judge service remains out of scope for the local submission.
+- **`.env` is intentionally ignored.** The committed configuration source of truth is `.env.example`; `verify_submission.sh` bootstraps `.env` from the example when needed.
