@@ -40,7 +40,7 @@ src/
 docs/                       — all written deliverables
 dashboards/                 — Prometheus and Grafana configuration
 logs/                       — audit trail output
-visualizations/             — drift charts, dashboard export, experiment charts
+visualizations/             — drift charts, dashboard export, metrics endpoint screenshot, experiment charts
 ```
 
 ## Setup
@@ -101,6 +101,7 @@ python src/governance/audit_trail.py
 - Grafana dashboard config: [dashboards/grafana-dashboard.json](dashboards/grafana-dashboard.json)
 - Prometheus config: [dashboards/prometheus.yml](dashboards/prometheus.yml)
 - Dashboard export: [visualizations/dashboard-export.png](visualizations/dashboard-export.png)
+- Live metrics endpoint screenshot: [visualizations/metrics-endpoint-screenshot.png](visualizations/metrics-endpoint-screenshot.png)
 - Interpretation document: [docs/dashboard-interpretation.md](docs/dashboard-interpretation.md)
 
 ### Component 2 — A/B Test Design & Simulation
